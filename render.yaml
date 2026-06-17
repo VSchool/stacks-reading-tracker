@@ -1,0 +1,20 @@
+# Render blueprint for the Stacks API.
+# The frontend deploys separately on Vercel.
+services:
+  - type: web
+    name: stacks-api
+    runtime: node
+    rootDir: backend
+    plan: starter # a paid tier keeps the service warm; free tier cold-starts
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: MONGO_URI
+        sync: false # set in the Render dashboard (MongoDB Atlas connection string)
+      - key: JWT_SECRET
+        sync: false # set in the Render dashboard (long random string)
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: CLIENT_ORIGIN
+        sync: false # set to the deployed Vercel URL
