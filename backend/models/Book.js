@@ -26,6 +26,10 @@ const bookSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  coverUrl: {
+    type: String,
+    default: '',
+  },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

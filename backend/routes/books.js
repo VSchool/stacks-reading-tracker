@@ -39,6 +39,39 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET /books/search?q= — look up books from the Open Library catalog
+router.get('/search', async (req, res) => {
+  try {
+    const q = (req.query.q || '').toString().trim();
+    if (!q) {
+      return res.json([]);
+    }
+
+    const url =
+      'https://openlibrary.org/search.json?limit=10' +
+      '&fields=title,author_name,first_publish_year,cover_i' +
+      '&q=' + encodeURIComponent(q);
+    const response = await fetch(url);
+    if (!response.ok) {
+      return res.status(502).json({ error: 'Book lookup is unavailable' });
+    }
+
+    const data = await response.json();
+    const results = (data.docs || []).map((d) => ({
+      title: d.title || 'Untitled',
+      author: Array.isArray(d.author_name) ? d.author_name[0] : 'Unknown',
+      year: d.first_publish_year || null,
+      coverUrl: d.cover_i
+        ? `https://covers.openlibrary.org/b/id/${d.cover_i}-M.jpg`
+        : '',
+    }));
+
+    return res.json(results);
+  } catch (err) {
+    return res.status(502).json({ error: 'Book lookup is unavailable' });
+  }
+});
+
 // GET /books/:id — fetch a single book
 router.get('/:id', async (req, res) => {
   try {
@@ -60,13 +93,14 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: problem });
     }
 
-    const { title, author, status, rating, favorite } = req.body;
+    const { title, author, status, rating, favorite, coverUrl } = req.body;
     const book = await Book.create({
       title,
       author,
       status,
       rating,
       favorite,
+      coverUrl,
       userId: req.user._id,
     });
 

@@ -46,6 +46,15 @@ export default function BookDetailPage() {
       <p className="subtle">
         <Link href="/">← Back to books</Link>
       </p>
+      {book.coverUrl ? (
+        <img
+          src={book.coverUrl}
+          alt=""
+          width={90}
+          height={135}
+          style={{ objectFit: 'cover', borderRadius: 6, background: '#eee', float: 'right', marginLeft: 16 }}
+        />
+      ) : null}
       <h1>{book.title}</h1>
       <p className="author">by {book.author}</p>
       <p>

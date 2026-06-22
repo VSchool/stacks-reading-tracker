@@ -10,8 +10,16 @@ export type Book = {
   status: 'reading' | 'finished' | 'want';
   rating: number;
   favorite: boolean;
+  coverUrl?: string;
   userId: string;
   createdAt: string;
+};
+
+export type BookSearchResult = {
+  title: string;
+  author: string;
+  year: number | null;
+  coverUrl: string;
 };
 
 export type User = {

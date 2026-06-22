@@ -13,6 +13,15 @@ type BookCardProps = {
 export default function BookCard({ book, favorite, onToggleFavorite }: BookCardProps) {
   return (
     <li className="book-card">
+      {book.coverUrl ? (
+        <img
+          src={book.coverUrl}
+          alt=""
+          width={36}
+          height={54}
+          style={{ objectFit: 'cover', borderRadius: 4, background: '#eee' }}
+        />
+      ) : null}
       <div className="meta">
         <div className="title">
           <Link href={`/books/${book._id}`}>{book.title}</Link>

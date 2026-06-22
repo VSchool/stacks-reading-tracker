@@ -37,9 +37,13 @@ async function start() {
   });
 }
 
-start().catch((err) => {
-  console.error('Failed to start server', err);
-  process.exit(1);
-});
+// Only start a listening server when run directly (local dev).
+// When imported (e.g. by a serverless host), the app is exported instead.
+if (require.main === module) {
+  start().catch((err) => {
+    console.error('Failed to start server', err);
+    process.exit(1);
+  });
+}
 
 module.exports = app;
