@@ -18,14 +18,6 @@ function validateBook(body) {
   if (status !== undefined && !STATUSES.includes(status)) {
     return `status must be one of: ${STATUSES.join(', ')}`;
   }
-  if (rating !== undefined) {
-    if (typeof rating !== 'number' || Number.isNaN(rating)) {
-      return 'rating must be a number';
-    }
-    if (rating < 0 || rating > 5) {
-      return 'rating must be between 0 and 5';
-    }
-  }
   return null;
 }
 

@@ -17,9 +17,7 @@ const bookSchema = new mongoose.Schema({
     default: 'want',
   },
   rating: {
-    type: Number,
-    min: 0,
-    max: 5,
+    type: mongoose.Schema.Types.Mixed,
     default: 0,
   },
   favorite: {
