@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
     if (token) {
       try {
         const decoded = jwt.verify(token, config.jwtSecret);
-        scope = { userId: decoded.id };
+        scope = { userId: decoded.sub };
       } catch (err) {
         scope = {};
       }

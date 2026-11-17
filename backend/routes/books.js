@@ -24,7 +24,7 @@ function validateBook(body) {
 // GET /books — list the signed-in user's books
 router.get('/', async (req, res) => {
   try {
-    const books = await Book.find({ userId: req.user._id }).sort({ createdAt: -1 });
+    const books = await Book.find({ userId: req.user.sub }).sort({ createdAt: -1 });
     return res.json(books);
   } catch (err) {
     return res.status(500).json({ error: 'Something went wrong' });
@@ -93,7 +93,7 @@ router.post('/', async (req, res) => {
       rating,
       favorite,
       coverUrl,
-      userId: req.user._id,
+      userId: req.user.sub,
     });
 
     return res.status(201).json(book);
@@ -110,7 +110,7 @@ router.put('/:id', async (req, res) => {
       return res.status(400).json({ error: problem });
     }
 
-    const book = await Book.findOne({ _id: req.params.id, userId: req.user._id });
+    const book = await Book.findOne({ _id: req.params.id, userId: req.user.sub });
     if (!book) {
       return res.status(404).json({ error: 'Book not found' });
     }
@@ -132,7 +132,7 @@ router.put('/:id', async (req, res) => {
 // DELETE /books/:id — remove a book the user owns
 router.delete('/:id', async (req, res) => {
   try {
-    const book = await Book.findOneAndDelete({ _id: req.params.id, userId: req.user._id });
+    const book = await Book.findOneAndDelete({ _id: req.params.id, userId: req.user.sub });
     if (!book) {
       return res.status(404).json({ error: 'Book not found' });
     }
