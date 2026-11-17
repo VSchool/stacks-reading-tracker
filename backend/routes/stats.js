@@ -8,16 +8,27 @@ const router = express.Router();
 // GET /stats — reading stats for the signed-in user
 router.get('/', async (req, res) => {
   try {
-    const token = req.headers.authorization.split(' ')[1];
-    const decoded = jwt.verify(token, config.jwtSecret);
-    const userId = decoded.id;
+    // When a valid token is present, scope the counts to that user.
+    // Otherwise fall back to totals across all books so the widget still
+    // renders something instead of erroring out.
+    let scope = {};
+    const header = req.headers.authorization || '';
+    const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, config.jwtSecret);
+        scope = { userId: decoded.id };
+      } catch (err) {
+        scope = {};
+      }
+    }
 
     const [total, reading, finished, want, favorites] = await Promise.all([
-      Book.countDocuments({ userId }),
-      Book.countDocuments({ userId, status: 'reading' }),
-      Book.countDocuments({ userId, status: 'finished' }),
-      Book.countDocuments({ userId, status: 'want' }),
-      Book.countDocuments({ userId, favorite: true }),
+      Book.countDocuments({ ...scope }),
+      Book.countDocuments({ ...scope, status: 'reading' }),
+      Book.countDocuments({ ...scope, status: 'finished' }),
+      Book.countDocuments({ ...scope, status: 'want' }),
+      Book.countDocuments({ ...scope, favorite: true }),
     ]);
 
     return res.json({ total, reading, finished, want, favorites });
